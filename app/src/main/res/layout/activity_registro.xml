@@ -144,7 +144,7 @@
             android:layout_height="60dp"
             android:text="Registrarse"
             android:textSize="24sp"
-            android:background="#394867"
+            android:background="@color/fondoSecundario"
             />
     </LinearLayout>
 
