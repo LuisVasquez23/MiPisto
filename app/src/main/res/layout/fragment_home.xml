@@ -54,118 +54,15 @@
         android:layout_height="350dp">
 
         <LinearLayout
+            android:id="@+id/linearLayoutCategories"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="30dp">
-                <LinearLayout
-                    android:layout_width="140dp"
-                    android:layout_height="140dp"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:background="@color/fondoIconos">
+            <!-- Las vistas de las categorías se generarán aquí dinámicamente -->
 
-                    <ImageView
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:src="@drawable/casa_icon"
-                        />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Casa"
-                        android:textSize="24dp"/>
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="30dp">
-                <LinearLayout
-                    android:layout_width="140dp"
-                    android:layout_height="140dp"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:background="@color/fondoIconos"
-                    >
-
-                    <ImageView
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:src="@drawable/comida_icon"
-                        />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Comida"
-                        android:textSize="24dp"/>
-
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="30dp">
-                <LinearLayout
-                    android:layout_width="140dp"
-                    android:layout_height="140dp"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:background="@color/fondoIconos">
-
-                    <ImageView
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:src="@drawable/higiene_icon"
-                        />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Higiene"
-                        android:textSize="24dp"/>
-
-                </LinearLayout>
-
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="30dp">
-                <LinearLayout
-                    android:layout_width="140dp"
-                    android:layout_height="140dp"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:background="@color/fondoIconos"
-                    >
-
-                    <ImageView
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:src="@drawable/ahorro_icon"
-                        />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Ahorro"
-                        android:textSize="24dp"/>
-
-                </LinearLayout>
-            </LinearLayout>
-
+            <!-- Ejemplo del diseño de una categoría -->
+            <include layout="@layout/item_categoria" />
 
         </LinearLayout>
 
@@ -177,12 +74,16 @@
         android:layout_height="wrap_content"
         android:gravity="end"
         android:layout_marginTop="30dp">
-        <ImageView
+        <ImageButton
             android:id="@+id/btnAñadircategoria"
             android:layout_width="50dp"
             android:layout_height="80dp"
             android:src="@drawable/mas_icon"
+            android:background="@android:color/transparent"
             />
+
+
+
     </LinearLayout>
 
 
