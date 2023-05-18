@@ -7,20 +7,20 @@
         android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:icon="@drawable/nav_inicio"
-            android:title="Home"/>
+            android:icon="@drawable/casa_icon"
+            android:title="Home" />
         <item
             android:id="@+id/nav_perfil"
-            android:icon="@drawable/nav_perfil"
-            android:title="Perfil"/>
+            android:icon="@drawable/perfil_nicon"
+            android:title="Perfil" />
         <item
             android:id="@+id/nav_fondos"
-            android:icon="@drawable/nav_fondos"
-            android:title="Fondos"/>
+            android:icon="@drawable/fondos_nicon"
+            android:title="Fondos" />
         <item
             android:id="@+id/nav_config"
-            android:icon="@drawable/nav_config"
-            android:title="Configuración"/>
+            android:icon="@drawable/config_nicon"
+            android:title="Configuración" />
 
     </group>
 
@@ -29,8 +29,8 @@
         <menu>
             <item
                 android:id="@+id/nav_cesesion"
-                android:icon="@drawable/nav_cesesion"
-                android:title="Cerrar Sesión"/>
+                android:icon="@drawable/cesesion_n"
+                android:title="Cerrar Sesión" />
         </menu>
     </item>
 

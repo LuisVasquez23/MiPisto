@@ -1,10 +1,19 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.MiPisto" parent="Theme.Material3.DayNight.NoActionBar">
-       <item name="colorPrimary">@color/lavender</item>
+        <item name="colorPrimary">@color/lavender</item>
         <item name="colorPrimaryVariant">@color/lavender</item>
         <item name="colorOnPrimary">@color/white</item>
     </style>
 
     <style name="Theme.MiPisto" parent="Base.Theme.MiPisto" />
+
+    <style name="Theme.MiPisto.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.MiPisto.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.MiPisto.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

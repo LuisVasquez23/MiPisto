@@ -64,6 +64,6 @@
         android:layout_gravity="start"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/nav_menu"
-        app:itemIconTint="#00000000"/>
+        />
 
 </androidx.drawerlayout.widget.DrawerLayout>
