@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -79,9 +78,12 @@
             android:layout_width="300dp"
             android:layout_height="48dp"
             android:hint="Contraseña"
-            android:autofillHints="false"/>
+            android:autofillHints="false"
+            android:inputType="textPassword"
+            android:maxLength="8" />
 
     </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -100,15 +102,26 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="vertical">
+
         <Button
             android:id="@+id/btnInicioSesion"
             android:layout_width="wrap_content"
             android:layout_height="60dp"
+            android:layout_marginBottom="10dp"
             android:text="Iniciar Sesión"
             android:textSize="24sp"
-            android:background="@color/fondoSecundario"
-            />
+            android:background="#394867" />
+
+        <Button
+            android:id="@+id/btnRegistro"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:text="Registro"
+            android:textSize="24sp"
+            android:background="#394867" />
+
     </LinearLayout>
 
 </LinearLayout>

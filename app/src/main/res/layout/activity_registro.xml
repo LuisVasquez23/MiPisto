@@ -126,7 +126,10 @@
                 android:layout_width="300dp"
                 android:layout_height="48dp"
                 android:hint="Contraseña"
-                android:autofillHints="false"/>
+                android:autofillHints="false"
+                android:inputType="textPassword"
+                android:maxLength="8"
+                />
 
         </LinearLayout>
 
