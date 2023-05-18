@@ -1,6 +1,8 @@
 package sv.edu.catolica.lv.mipisto;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -12,14 +14,15 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 
+
 public class Login extends AppCompatActivity {
     private EditText editTextEmail;
     private EditText editTextPassword;
     private Button buttonLogin;
     private Button btnRegistro;
 
-
     private DatabaseHelper databaseHelper;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,9 +35,15 @@ public class Login extends AppCompatActivity {
         buttonLogin = findViewById(R.id.btnInicioSesion);
         btnRegistro = findViewById(R.id.btnRegistro);
 
-
         // Inicializar instancia de DatabaseHelper
         databaseHelper = new DatabaseHelper(this);
+        // Inicializar instancia de SharedPreferences
+        sharedPreferences = getSharedPreferences("session", Context.MODE_PRIVATE);
+
+        // Verificar si hay una sesión iniciada
+        if (isUserLoggedIn()) {
+            redirectToHome(); // Redirigir a la actividad de inicio directamente
+        }
 
         // Configurar el click listener del botón de inicio de sesión
         buttonLogin.setOnClickListener(new View.OnClickListener() {
@@ -50,26 +59,24 @@ public class Login extends AppCompatActivity {
                 } else {
                     // Verificar las credenciales en la base de datos
                     if (checkCredentials(email, password)) {
-                        // Iniciar sesión exitosa, redirigir a la siguiente actividad
-                        Intent intent = new Intent(Login.this, MainActivity.class);
-                        startActivity(intent);
-                        finish(); // Cerrar la actividad de inicio de sesión
+                        // Iniciar sesión exitosa
+                        setLoggedIn(true); // Guardar el estado de inicio de sesión en SharedPreferences
+                        redirectToHome(); // Redirigir a la actividad de inicio
                     } else {
                         // Credenciales incorrectas, mostrar mensaje de error
                         Toast.makeText(Login.this, "Credenciales incorrectas", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
-
         });
 
-        //ir a registro
+        // Ir a registro
         btnRegistro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Login.this, Registro.class);
                 startActivity(intent);
-                finishAffinity(); // Finaliza todas las actividades en la pila, incluyendo la de inicio de sesión
+                finishAffinity(); // Finalizar todas las actividades en la pila, incluyendo la de inicio de sesión
             }
         });
     }
@@ -88,4 +95,21 @@ public class Login extends AppCompatActivity {
 
         return result;
     }
+
+    private void setLoggedIn(boolean isLoggedIn) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("isLoggedIn", isLoggedIn);
+        editor.apply();
+    }
+
+    private boolean isUserLoggedIn() {
+        return sharedPreferences.getBoolean("isLoggedIn", false);
+    }
+
+    private void redirectToHome() {
+        Intent intent = new Intent(Login.this, Inicio.class);
+        startActivity(intent);
+        finish(); // Cerrar la actividad de inicio de sesión
+    }
 }
+
