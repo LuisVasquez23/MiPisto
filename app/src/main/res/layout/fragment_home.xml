@@ -75,11 +75,13 @@
         android:gravity="end"
         android:layout_marginTop="30dp">
         <ImageButton
+            android:contentDescription="AñadirCategoria"
             android:id="@+id/btnAñadircategoria"
             android:layout_width="50dp"
             android:layout_height="80dp"
             android:src="@drawable/mas_icon"
-            android:background="@android:color/transparent"
+            android:scaleType="fitCenter"
+            android:background="@color/transparenet"
             />
 
 

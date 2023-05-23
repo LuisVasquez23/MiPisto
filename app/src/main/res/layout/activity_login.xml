@@ -57,6 +57,8 @@
             android:layout_width="300dp"
             android:layout_height="48dp"
             android:hint="Correo Electronico"
+            android:paddingStart="16dp"
+            android:background="@drawable/edittext"
             android:autofillHints="false"/>
 
     </LinearLayout>
@@ -78,6 +80,8 @@
             android:layout_width="300dp"
             android:layout_height="48dp"
             android:hint="Contraseña"
+            android:paddingStart="16dp"
+            android:background="@drawable/edittext"
             android:autofillHints="false"
             android:inputType="textPassword"
             android:maxLength="8" />

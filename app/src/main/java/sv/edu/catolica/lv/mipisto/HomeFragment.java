@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,13 +38,31 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 try {
-                    Intent intent = new Intent(getActivity(), AgregarCategoriaActivity.class);
-                    startActivity(intent);
+                    //llamar al fragment secundario a abrir y mostrarlo
+                    Fragment fragmentSecundario = new AgregarCategoria();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.fragment_container, fragmentSecundario);
+                    // Opcionalmente, puedes agregar una transición animada
+                    // fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+                    FragmentTransaction fragmentTransac = fragmentManager.beginTransaction();
+                    fragmentTransaction.setCustomAnimations(
+                            R.anim.fade_in, // ID del recurso de animación para la entrada del Fragment
+                            R.anim.fade_out, // ID del recurso de animación para la salida del Fragment
+                            R.anim.fade_in, // ID del recurso de animación para la entrada del Fragment secundario
+                            R.anim.fade_out // ID del recurso de animación para la salida del Fragment secundario
+                    );
+                    fragmentTransaction.replace(R.id.fragment_container, fragmentSecundario);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+
+
+
                 } catch (Exception e) {
                     e.printStackTrace();
-                    String errorMessage = "Error al iniciar AgregarCategoriaActivity: " + e.getMessage();
+                    String errorMessage = "Error al iniciar AgregarCategoria: " + e.getMessage();
                     Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
-                    Log.e("HomeFragment", "Error al iniciar AgregarCategoriaActivity: " + e.getMessage());
+                    Log.e("HomeFragment", "Error al iniciar AgregarCategoria: " + e.getMessage());
                 }
             }
         });
