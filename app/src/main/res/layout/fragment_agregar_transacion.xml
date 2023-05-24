@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AgregarCategoria">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Agregar Categoría"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="16dp"
+            android:layout_margin="20dp"/>
+
+        <EditText
+            android:id="@+id/editTextNombreCategoria"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:paddingStart="16dp"
+            android:hint="Nombre de la categoría"
+            android:background="@drawable/edittext"
+            android:inputType="text"
+            android:layout_margin="20dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="330dp"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:src="@android:drawable/ic_menu_gallery"
+                android:scaleType="centerCrop"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"/>
+
+
+            <ImageButton
+                android:contentDescription="CargarImagen"
+                android:layout_margin="10dp"
+                android:id="@+id/selectButton"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/cargar_icon"
+                android:background="@android:color/transparent"
+                android:layout_gravity="center_horizontal"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="bottom|right"
+            android:layout_marginBottom="40dp"
+            >
+
+            <ImageButton
+                android:contentDescription="Aceptar"
+                android:id="@+id/btnAgregarCategoria"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/confirmar_icon"
+                android:background="@android:color/transparent"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:layout_margin="10dp"
+                />
+            <ImageButton
+                android:contentDescription="Cancelar"
+                android:labelFor="@id/btnCancelar"
+                android:layout_margin="10dp"
+                android:id="@+id/btnCancelar"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/cancelar_icon"
+                android:background="@android:color/transparent"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                />
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+</FrameLayout>
