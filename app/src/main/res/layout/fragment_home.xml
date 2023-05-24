@@ -48,7 +48,15 @@
 
 
     </LinearLayout>
-
+    <TextView
+        android:id="@+id/textViewNoCategories"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No hay categorías agregadas"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:gravity="center"
+        android:padding="16dp"
+        android:visibility="gone" />
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="350dp">
@@ -57,12 +65,16 @@
             android:id="@+id/linearLayoutCategories"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:gravity="center">
 
-            <!-- Las vistas de las categorías se generarán aquí dinámicamente -->
+
+        <!-- Las vistas de las categorías se generarán aquí dinámicamente -->
 
             <!-- Ejemplo del diseño de una categoría -->
             <include layout="@layout/item_categoria" />
+
+
 
         </LinearLayout>
 

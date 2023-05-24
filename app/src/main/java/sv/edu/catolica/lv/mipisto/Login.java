@@ -1,5 +1,6 @@
 package sv.edu.catolica.lv.mipisto;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -60,7 +61,9 @@ public class Login extends AppCompatActivity {
                     // Verificar las credenciales en la base de datos
                     if (checkCredentials(email, password)) {
                         // Iniciar sesión exitosa
+                        int userId = getUserId(email); // Obtener el ID del usuario desde la base de datos
                         setLoggedIn(true); // Guardar el estado de inicio de sesión en SharedPreferences
+                        saveUserId(userId); // Guardar el ID del usuario en SharedPreferences
                         redirectToHome(); // Redirigir a la actividad de inicio
                     } else {
                         // Credenciales incorrectas, mostrar mensaje de error
@@ -81,35 +84,89 @@ public class Login extends AppCompatActivity {
         });
     }
 
+    @SuppressLint("Range")
+    private int getUserId(String email) {
+        int userId = -1; // Valor predeterminado si no se encuentra el usuario
+
+        try {
+            SQLiteDatabase db = databaseHelper.getReadableDatabase();
+            Cursor cursor = db.rawQuery("SELECT user_id FROM User WHERE email = ?", new String[]{email});
+
+            if (cursor.moveToFirst()) {
+                userId = cursor.getInt(cursor.getColumnIndex("user_id"));
+                Toast.makeText(Login.this, "ID del usuario: " + userId, Toast.LENGTH_SHORT).show();
+
+            }
+
+            cursor.close();
+            db.close();
+        } catch (Exception e) {
+            Toast.makeText(Login.this, "Error al obtener el ID del usuario: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+
+        return userId;
+    }
+
+
     private boolean checkCredentials(String email, String password) {
-        SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        boolean result = false;
 
-        // Realizar una consulta a la base de datos para verificar las credenciales
-        Cursor cursor = db.rawQuery("SELECT * FROM User WHERE email = ? AND password = ?",
-                new String[]{email, password});
+        try {
+            SQLiteDatabase db = databaseHelper.getReadableDatabase();
 
-        boolean result = cursor.getCount() > 0;
+            // Realizar una consulta a la base de datos para verificar las credenciales
+            Cursor cursor = db.rawQuery("SELECT * FROM User WHERE email = ? AND password = ?", new String[]{email, password});
 
-        cursor.close();
-        db.close();
+            result = cursor.getCount() > 0;
+
+            cursor.close();
+            db.close();
+        } catch (Exception e) {
+            Toast.makeText(Login.this, "Error al verificar las credenciales: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
 
         return result;
     }
 
     private void setLoggedIn(boolean isLoggedIn) {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("isLoggedIn", isLoggedIn);
-        editor.apply();
+        try {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("isLoggedIn", isLoggedIn);
+            editor.apply();
+        } catch (Exception e) {
+            Toast.makeText(Login.this, "Error al guardar el estado de inicio de sesión: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
     }
 
     private boolean isUserLoggedIn() {
         return sharedPreferences.getBoolean("isLoggedIn", false);
     }
 
-    private void redirectToHome() {
-        Intent intent = new Intent(Login.this, Inicio.class);
-        startActivity(intent);
-        finish(); // Cerrar la actividad de inicio de sesión
+    private void saveUserId(int userId) {
+        try {
+            sharedPreferences.edit().putInt("user_id", userId).apply();
+
+            Toast.makeText(Login.this, "ID del usuario guardado: " + userId, Toast.LENGTH_SHORT).show();
+
+        } catch (Exception e) {
+            Toast.makeText(Login.this, "Error al guardar el ID del usuario: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
     }
+
+    private void redirectToHome() {
+        try {
+            Intent intent = new Intent(Login.this, Inicio.class);
+            startActivity(intent);
+            finish(); // Cerrar la actividad de inicio de sesión
+        } catch (Exception e) {
+            Toast.makeText(Login.this, "Error al redirigir a la pantalla de inicio: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+    }
+
 }
 

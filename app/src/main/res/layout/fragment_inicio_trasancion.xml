@@ -3,13 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".InicioTransacion"
     android:padding="40dp"
     android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="150dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
@@ -22,7 +21,7 @@
 
         <LinearLayout
             android:id="@+id/accederFondos"
-            android:layout_width="333dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:background="@color/fondoPrincipal"
@@ -35,50 +34,44 @@
                 android:src="@drawable/inicio_din" />
 
             <TextView
+                android:id="@+id/textViewCategory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:text="200.00"
+                android:text="x categoria"
                 android:textColor="@color/white"
                 android:textSize="48sp" />
         </LinearLayout>
-
-
     </LinearLayout>
+
     <TextView
-        android:id="@+id/textViewNoCategories"
+        android:id="@+id/textViewNoTransacion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="No hay categorías agregadas"
+        android:text="No hay transacciones agregadas"
         android:textAppearance="?android:textAppearanceMedium"
         android:gravity="center"
         android:padding="16dp"
         android:visibility="gone" />
+
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="350dp">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <LinearLayout
-            android:id="@+id/linearLayoutCategories"
+            android:id="@+id/linearTransacion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center">
 
-
-        <!-- Las vistas de las categorías se generarán aquí dinámicamente -->
-
-            <!-- Ejemplo del diseño de una categoría -->
-            <include layout="@layout/item_categoria" />
-
-
+            <!-- Las vistas de las transacciones se generarán aquí dinámicamente -->
 
         </LinearLayout>
-
-
     </ScrollView>
 
     <LinearLayout
@@ -86,19 +79,13 @@
         android:layout_height="wrap_content"
         android:gravity="end"
         android:layout_marginTop="30dp">
+
         <ImageButton
-            android:contentDescription="AñadirCategoria"
-            android:id="@+id/btnAñadircategoria"
+            android:id="@+id/btnAñadirTransacion"
             android:layout_width="50dp"
             android:layout_height="80dp"
             android:src="@drawable/mas_icon"
             android:scaleType="fitCenter"
-            android:background="@color/transparenet"
-            />
-
-
-
+            android:background="@android:color/transparent" />
     </LinearLayout>
-
-
 </LinearLayout>

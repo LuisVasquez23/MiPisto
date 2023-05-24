@@ -1,47 +1,75 @@
 package sv.edu.catolica.lv.mipisto;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class HomeFragment extends Fragment {
-    private ImageButton btnAñadircategoria;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+public class InicioTransacion extends Fragment {
+    private ImageButton btnAñadirTransacion;
 
     private LinearLayout linearLayoutCategories;
     private DatabaseHelper databaseHelper;
+    private int categoryId;
+    private SharedPreferences sharedPreferences;
+
+
+    private String categoryName;
+    private TextView textViewCategory;
+    public static InicioTransacion newInstance(int categoryId, String categoryName) {
+        InicioTransacion fragment = new InicioTransacion();
+        Bundle args = new Bundle();
+        args.putInt("categoryId", categoryId);
+        args.putString("categoryName", categoryName);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_home, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_inicio_trasancion, container, false);
 
         // Obtener referencia al botón de añadir categorías desde la vista raíz
-        btnAñadircategoria = rootView.findViewById(R.id.btnAñadircategoria);
+        btnAñadirTransacion = rootView.findViewById(R.id.btnAñadirTransacion);
 
+
+        // Obtener el ID de la categoría desde los argumentos pasados al fragmento
+        Bundle args = getArguments();
+        if (args != null) {
+            categoryId = args.getInt("categoryId");
+            categoryName = args.getString("categoryName");
+        }
+
+        textViewCategory = rootView.findViewById(R.id.textViewCategory);
+        textViewCategory.setText(String.valueOf(categoryId+categoryName));
         // Configurar OnClickListener para el botón de añadir categorías
-        btnAñadircategoria.setOnClickListener(new View.OnClickListener() {
+        // Configurar OnClickListener para el botón de añadir categorías
+        btnAñadirTransacion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
-                    //llamar al fragment secundario a abrir y mostrarlo
-                    Fragment fragmentSecundario = new AgregarCategoria();
+                    // Llamar al fragmento secundario a abrir y mostrarlo
+                    Fragment fragmentSecundario = new AgregarTransacion();
                     FragmentManager fragmentManager = getFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.replace(R.id.fragment_container, fragmentSecundario);
@@ -58,16 +86,19 @@ public class HomeFragment extends Fragment {
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
 
-
-
+                    // Cerrar el fragmento actual
+                    FragmentTransaction fragmentTransactionInicio = fragmentManager.beginTransaction();
+                    fragmentTransactionInicio.remove(InicioTransacion.this);
+                    fragmentTransactionInicio.commit();
                 } catch (Exception e) {
                     e.printStackTrace();
                     String errorMessage = "Error al iniciar AgregarCategoria: " + e.getMessage();
                     Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
-                    Log.e("HomeFragment", "Error al iniciar AgregarCategoria: " + e.getMessage());
+                    Log.e("InicioTransacion", "Error al iniciar AgregarCategoria: " + e.getMessage());
                 }
             }
         });
+
 
         return rootView;
     }
@@ -82,91 +113,74 @@ public class HomeFragment extends Fragment {
 
         // Inicializar instancia de DatabaseHelper
         databaseHelper = new DatabaseHelper(getActivity());
+        sharedPreferences = getActivity().getSharedPreferences("session", Context.MODE_PRIVATE);
 
-        // Cargar las categorías desde la base de datos
-        cargarCategorias();
+        // Obtener el ID de la categoría enviado como argumento
+        categoryId = getArguments().getInt("categoryId");
+
+        // Cargar las transacciones desde la base de datos
+        cargarTransaccion();
     }
 
-    private void cargarCategorias() {
+    private void cargarTransaccion() {
         SQLiteDatabase db = databaseHelper.getReadableDatabase();
 
-        // Realizar una consulta a la base de datos para obtener las categorías
-        Cursor cursor = db.rawQuery("SELECT * FROM Categoria", null);
+        // Obtener el ID de usuario desde SharedPreferences
+        int userId = getUserIdFromSharedPreferences();
+        Toast.makeText(getContext(), "id en categoria"+userId+" en la categoria con id: "+categoryId, Toast.LENGTH_SHORT).show();
 
-        // Obtener referencia al TextView para mostrar el mensaje cuando no hay categorías
-        TextView textViewNoCategories = getView().findViewById(R.id.textViewNoCategories);
+        // Realizar una consulta a la base de datos para obtener las transacciones de la categoría y usuario específicos
+        Cursor cursor = db.rawQuery("SELECT * FROM Transacciones WHERE category_id = ? AND user_id = ?", new String[]{String.valueOf(categoryId), String.valueOf(userId)});
+
+        // Obtener referencia al TextView para mostrar el mensaje cuando no hay transacciones
+        TextView textViewNoTransacion = getView().findViewById(R.id.textViewNoTransacion);
 
         // Limpiar el contenedor principal
+        LinearLayout linearLayoutCategories = getView().findViewById(R.id.linearTransacion);
         linearLayoutCategories.removeAllViews();
 
-        // Variable de bandera para controlar si se encontraron categorías
-        boolean categoriasEncontradas = false;
+        // Variable de bandera para controlar si se encontraron transacciones
+        boolean transaccionesEncontradas = false;
 
-        // Verificar si hay categorías disponibles
+        // Verificar si hay transacciones disponibles
         if (cursor.moveToFirst()) {
             do {
-                // Obtener los datos de la categoría desde el cursor
-                @SuppressLint("Range") int categoryId = cursor.getInt(cursor.getColumnIndex("category_id"));
-                @SuppressLint("Range") String categoryName = cursor.getString(cursor.getColumnIndex("category_name"));
-                @SuppressLint("Range") byte[] categoryImage = cursor.getBlob(cursor.getColumnIndex("category_image"));
+                // Obtener los datos de la transacción desde el cursor
+                @SuppressLint("Range") int transactionId = cursor.getInt(cursor.getColumnIndex("Transaction_Id"));
+                @SuppressLint("Range") String description = cursor.getString(cursor.getColumnIndex("Description"));
+                @SuppressLint("Range") String date = cursor.getString(cursor.getColumnIndex("Data_registred"));
+                @SuppressLint("Range") double amount = cursor.getDouble(cursor.getColumnIndex("Amount"));
 
-                // Inflar el diseño de la categoría
-                View categoriaView = getLayoutInflater().inflate(R.layout.item_categoria, linearLayoutCategories, false);
+                // Inflar el diseño de la transacción
+                View transaccionView = getLayoutInflater().inflate(R.layout.item_transacion, linearLayoutCategories, false);
 
-                // Configurar los elementos de la vista de la categoría según los datos obtenidos
-                TextView textViewCategoryName = categoriaView.findViewById(R.id.textViewCategoryName);
-                textViewCategoryName.setText(categoryName);
+                // Configurar los elementos de la vista de la transacción según los datos obtenidos
+                TextView textViewDescription = transaccionView.findViewById(R.id.textViewDescription);
+                TextView textViewDate = transaccionView.findViewById(R.id.textViewDate);
+                TextView textViewAmount = transaccionView.findViewById(R.id.textViewAmount);
 
-                // Obtener referencia al ImageButton
-                ImageButton imageButtonCategory = categoriaView.findViewById(R.id.imageButtonCategory);
+                textViewDescription.setText(description);
+                textViewDate.setText(date);
+                textViewAmount.setText(String.valueOf(amount));
 
-                // Cargar la imagen desde el byte[] almacenado en la base de datos
-                Bitmap originalBitmap = BitmapFactory.decodeByteArray(categoryImage, 0, categoryImage.length);
+                // Agregar la vista de la transacción al contenedor
+                linearLayoutCategories.addView(transaccionView);
 
-                // Redimensionar la imagen al tamaño deseado
-                int desiredWidth = 500; // Tamaño deseado en píxeles
-                int desiredHeight = 250; // Tamaño deseado en píxeles
-                Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, desiredWidth, desiredHeight, false);
-                // Agregar el listener al ImageButton
-                imageButtonCategory.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // Obtener una instancia del FragmentManager
-                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-
-                        // Crear una instancia del fragmento que deseas mostrar
-                        Fragment fragment = new AgregarTransacion();
-
-                        // Realizar la transacción para mostrar el fragmento
-                        fragmentManager.beginTransaction()
-                                .replace(R.id.fragment_container, fragment) // Reemplaza R.id.fragmentContainer con el ID del contenedor en tu layout
-                                .addToBackStack(null) // Opcional: agrega la transacción a la pila de retroceso
-                                .commit();
-                    }
-                });
-
-                // Establecer la imagen redimensionada en el ImageButton
-                imageButtonCategory.setImageBitmap(resizedBitmap);
-
-                // Agregar la vista de la categoría al contenedor
-                linearLayoutCategories.addView(categoriaView);
-
-                // Establecer la bandera como verdadera, ya que se encontraron categorías
-                categoriasEncontradas = true;
+                // Establecer la bandera como verdadera, ya que se encontraron transacciones
+                transaccionesEncontradas = true;
             } while (cursor.moveToNext());
         }
 
-        // Mostrar u ocultar el contenedor principal y el mensaje según si se encontraron categorías
-        linearLayoutCategories.setVisibility(categoriasEncontradas ? View.VISIBLE : View.GONE);
-        textViewNoCategories.setVisibility(categoriasEncontradas ? View.GONE : View.VISIBLE);
+        // Mostrar u ocultar el contenedor principal y el mensaje según si se encontraron transacciones
+        linearLayoutCategories.setVisibility(transaccionesEncontradas ? View.VISIBLE : View.GONE);
+        textViewNoTransacion.setVisibility(transaccionesEncontradas ? View.GONE : View.VISIBLE);
 
         cursor.close();
         db.close();
     }
-
-
-
-
+    private int getUserIdFromSharedPreferences() {
+        return sharedPreferences.getInt("user_id", -1);
+    }
 
 
 }

@@ -92,6 +92,7 @@ public class Inicio extends AppCompatActivity implements NavigationView.OnNaviga
     private void logout() {
         // Realizar aquí las tareas de cierre de sesión, como borrar datos de sesión, etc.
         setLoggedIn(false); // Establecer el estado de inicio de sesión como falso o cerrado
+        clearUserId(); // Borrar el ID del usuario guardado en SharedPreferences
 
         // Redirigir a la pantalla de inicio de sesión (Login)
         Intent intent = new Intent(Inicio.this, Login.class);
@@ -108,5 +109,10 @@ public class Inicio extends AppCompatActivity implements NavigationView.OnNaviga
     private boolean isUserLoggedIn() {
         return sharedPreferences.getBoolean("isLoggedIn", false);
     }
-}
 
+    private void clearUserId() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove("userId");
+        editor.apply();
+    }
+}

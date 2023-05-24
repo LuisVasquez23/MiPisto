@@ -3,8 +3,10 @@ package sv.edu.catolica.lv.mipisto;
 import android.Manifest;
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -12,6 +14,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,203 +28,147 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.bumptech.glide.Glide;
 
 import java.io.ByteArrayOutputStream;
 
-public class AgregarCategoria extends Fragment {
+public class AgregarTransacion extends Fragment {
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_PICK_IMAGE = 2;
     private static final int PERMISSION_REQUEST_CAMERA = 3;
     private static final int PERMISSION_REQUEST_STORAGE = 4;
 
-    private EditText editTextNombreCategoria;
-    private ImageView imageView;
-    private ImageButton btnAgregarCategoria, btnCancelAR, btnSelect;
+    private EditText editTextDescription;
+    private EditText editTextAmount;
+    private EditText editTextTransactionType;
+    private EditText editTextCategoryId;
+    private EditText editTextUserId;
+    private ImageButton btnAgregarTransaccion;
+    private ImageButton btnCancelar;
+    private SharedPreferences sharedPreferences;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_agregar_categoria, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_agregar_transacion, container, false);
 
-        editTextNombreCategoria = rootView.findViewById(R.id.editTextNombreCategoria);
-        imageView = rootView.findViewById(R.id.imageView);
-        btnAgregarCategoria = rootView.findViewById(R.id.btnAgregarCategoria);
-        btnCancelAR = rootView.findViewById(R.id.btnCancelar);
-        btnSelect = rootView.findViewById(R.id.selectButton);
-        btnAgregarCategoria.setOnClickListener(new View.OnClickListener() {
+        editTextDescription = rootView.findViewById(R.id.editTextDescription);
+        editTextAmount = rootView.findViewById(R.id.editTextAmount);
+        editTextTransactionType = rootView.findViewById(R.id.editTextTransactionType);
+        editTextCategoryId = rootView.findViewById(R.id.editTextCategoryId);
+        btnAgregarTransaccion = rootView.findViewById(R.id.btnAgregarTransaccion);
+        btnCancelar = rootView.findViewById(R.id.btnCancelar);
+        sharedPreferences = getActivity().getSharedPreferences("session", Context.MODE_PRIVATE);
+
+        btnAgregarTransaccion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                agregarCategoria();
+                agregarTransaccion();
             }
         });
 
-        btnCancelAR.setOnClickListener(new View.OnClickListener() {
+        btnCancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 redirectToHome();
             }
         });
 
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showImageSelectionOptions();
-            }
-        });
-        btnSelect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showImageSelectionOptions();
-            }
-        });
+
 
 
         return rootView;
     }
 
-    private void agregarCategoria() {
-        String nombreCategoria = editTextNombreCategoria.getText().toString().trim();
+    private void agregarTransaccion() {
+        // Obtener los valores ingresados por el usuario
+        String description = editTextDescription.getText().toString();
+        double amount = Double.parseDouble(editTextAmount.getText().toString());
+        String transactionType = editTextTransactionType.getText().toString();
+        int categoryId = Integer.parseInt(editTextCategoryId.getText().toString());
+        int userId = getUserIdFromSharedPreferences(); // Obtener el ID de usuario desde SharedPreferences
 
-        if (nombreCategoria.isEmpty()) {
-            Toast.makeText(getActivity(), "Ingrese un nombre de categoría", Toast.LENGTH_SHORT).show();
+        // Validar que se hayan ingresado todos los campos requeridos
+        if (TextUtils.isEmpty(description) || TextUtils.isEmpty(transactionType)) {
+            Toast.makeText(getActivity(), "Por favor, complete todos los campos", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        // Aquí puedes realizar cualquier validación adicional necesaria
+
+        // Obtener una instancia de SQLiteDatabase
         DatabaseHelper databaseHelper = new DatabaseHelper(getActivity());
         SQLiteDatabase database = databaseHelper.getWritableDatabase();
 
-        byte[] imagenCategoria = obtenerBytesDeImagen();
-
-        ContentValues values = new ContentValues();
-        values.put("category_name", nombreCategoria);
-        values.put("category_image", imagenCategoria);
-
-        long resultado = database.insert("Categoria", null, values);
-
-        if (resultado != -1) {
-            Toast.makeText(getActivity(), "Categoría agregada correctamente", Toast.LENGTH_SHORT).show();
-            redirectToHome();
-        } else {
-            Toast.makeText(getActivity(), "Error al agregar la categoría", Toast.LENGTH_SHORT).show();
-        }
-
-        database.close();
-    }
-
-    private void redirectToHome() {
-        Intent intent = new Intent(getActivity(), Inicio.class);
-        startActivity(intent);
-        getActivity().finish();
-    }
-
-    private void showImageSelectionOptions() {
-        String[] options = {"Tomar fotografía", "Seleccionar de la galería"};
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Seleccionar imagen");
-        builder.setItems(options, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (which == 0) {
-                    checkCameraPermission();
-                } else if (which == 1) {
-                    checkStoragePermission();
-                }
-            }
-        });
-        builder.show();
-    }
-
-    private void checkCameraPermission() {
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUEST_CAMERA);
-        } else {
-            dispatchTakePictureIntent();
-        }
-    }
-
-    private void checkStoragePermission() {
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_STORAGE);
-        } else {
-            dispatchPickImageIntent();
-        }
-    }
-
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        }
-    }
-
-    private void dispatchPickImageIntent() {
-        Intent pickImageIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        pickImageIntent.setType("image/*");
-        startActivityForResult(pickImageIntent, REQUEST_PICK_IMAGE);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            showSelectedImage(imageBitmap);
-        } else if (requestCode == REQUEST_PICK_IMAGE && resultCode == Activity.RESULT_OK) {
-            if (data != null) {
-                Uri selectedImageUri = data.getData();
-                showSelectedImage(selectedImageUri);
-            }
-        }
-    }
-
-    private void showSelectedImage(Bitmap imageBitmap) {
-        imageView.setImageBitmap(imageBitmap);
-    }
-
-    private void showSelectedImage(Uri selectedImageUri) {
-        Glide.with(this)
-                .load(selectedImageUri)
-                .into(imageView);
-    }
-
-    private byte[] obtenerBytesDeImagen() {
-        Bitmap bitmap = null;
         try {
-            bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+            // Iniciar una transacción
+            database.beginTransaction();
+
+            // Crear un objeto ContentValues para almacenar los valores de la transacción
+            ContentValues values = new ContentValues();
+            values.put("description", description);
+            values.put("amount", amount);
+            values.put("transaction_type", transactionType);
+            values.put("category_id", categoryId);
+            values.put("user_id", userId);
+
+            // Insertar la transacción en la tabla correspondiente
+            long result = database.insert("Transacciones", null, values);
+
+            // Verificar si la inserción fue exitosa
+            if (result != -1) {
+                Toast.makeText(getActivity(), "Transacción agregada correctamente", Toast.LENGTH_SHORT).show();
+
+                // Establecer el marcador de transacción exitosa
+                database.setTransactionSuccessful();
+
+                // Realizar alguna acción adicional, como regresar al fragmento anterior
+                FragmentManager fragmentManager = getFragmentManager();
+                if (fragmentManager != null) {
+                    fragmentManager.popBackStack();
+                }
+            } else {
+                Toast.makeText(getActivity(), "Error al agregar la transacción", Toast.LENGTH_SHORT).show();
+            }
         } catch (Exception e) {
             e.printStackTrace();
-        }
-
-        if (bitmap != null) {
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-            return stream.toByteArray();
-        }
-
-        return null;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == PERMISSION_REQUEST_CAMERA) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                dispatchTakePictureIntent();
-            } else {
-                Toast.makeText(getActivity(), "Permiso de cámara denegado", Toast.LENGTH_SHORT).show();
-            }
-        } else if (requestCode == PERMISSION_REQUEST_STORAGE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                dispatchPickImageIntent();
-            } else {
-                Toast.makeText(getActivity(), "Permiso de almacenamiento denegado", Toast.LENGTH_SHORT).show();
-            }
+            Toast.makeText(getActivity(), "Error al agregar la transacción: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        } finally {
+            // Finalizar la transacción y cerrar la conexión con la base de datos
+            database.endTransaction();
+            database.close();
         }
     }
+
+
+
+    private int getUserIdFromSharedPreferences() {
+        return sharedPreferences.getInt("user_id", -1);
+    }
+
+
+
+
+    private void redirectToHome() {
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+
+        // Crear una instancia del fragmento "InicioTransaccion"
+        Fragment fragment = new InicioTransacion();
+
+        // Realizar la transacción para mostrar el fragmento
+        fragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, fragment) // Reemplaza R.id.fragmentContainer con el ID del contenedor en tu layout
+                .commit();
+    }
+
+
+
+
+
+
+
+
+
 }
