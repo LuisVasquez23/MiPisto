@@ -73,6 +73,11 @@ public class InicioTransacion extends Fragment {
                     FragmentManager fragmentManager = getFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.replace(R.id.fragment_container, fragmentSecundario);
+                    // Crear un Bundle para pasar los argumentos
+                    Bundle args = new Bundle();
+                    args.putInt("categoryId", categoryId);
+                    args.putString("categoryName", categoryName);
+                    fragmentSecundario.setArguments(args);
                     // Opcionalmente, puedes agregar una transición animada
                     // fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
                     FragmentTransaction fragmentTransac = fragmentManager.beginTransaction();

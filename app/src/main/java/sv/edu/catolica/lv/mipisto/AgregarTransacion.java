@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.icu.util.Calendar;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -33,6 +34,8 @@ import androidx.fragment.app.FragmentManager;
 import com.bumptech.glide.Glide;
 
 import java.io.ByteArrayOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class AgregarTransacion extends Fragment {
 
@@ -49,6 +52,7 @@ public class AgregarTransacion extends Fragment {
     private ImageButton btnAgregarTransaccion;
     private ImageButton btnCancelar;
     private SharedPreferences sharedPreferences;
+    private int categoryId; // Variable para almacenar categoryId
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,10 +61,10 @@ public class AgregarTransacion extends Fragment {
         editTextDescription = rootView.findViewById(R.id.editTextDescription);
         editTextAmount = rootView.findViewById(R.id.editTextAmount);
         editTextTransactionType = rootView.findViewById(R.id.editTextTransactionType);
-        editTextCategoryId = rootView.findViewById(R.id.editTextCategoryId);
         btnAgregarTransaccion = rootView.findViewById(R.id.btnAgregarTransaccion);
         btnCancelar = rootView.findViewById(R.id.btnCancelar);
         sharedPreferences = getActivity().getSharedPreferences("session", Context.MODE_PRIVATE);
+
 
         btnAgregarTransaccion.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,6 +81,11 @@ public class AgregarTransacion extends Fragment {
         });
 
 
+        Bundle args = getArguments();
+        if (args != null) {
+            categoryId = args.getInt("categoryId"); // Asignar el valor de categoryId
+            // Resto del código...
+        }
 
 
         return rootView;
@@ -87,7 +96,6 @@ public class AgregarTransacion extends Fragment {
         String description = editTextDescription.getText().toString();
         double amount = Double.parseDouble(editTextAmount.getText().toString());
         String transactionType = editTextTransactionType.getText().toString();
-        int categoryId = Integer.parseInt(editTextCategoryId.getText().toString());
         int userId = getUserIdFromSharedPreferences(); // Obtener el ID de usuario desde SharedPreferences
 
         // Validar que se hayan ingresado todos los campos requeridos
@@ -97,7 +105,16 @@ public class AgregarTransacion extends Fragment {
         }
 
         // Aquí puedes realizar cualquier validación adicional necesaria
-
+        // Obtener la fecha actual
+        Calendar calendar = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            calendar = Calendar.getInstance();
+        }
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String date = "";
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            date = dateFormat.format(calendar.getTime());
+        }
         // Obtener una instancia de SQLiteDatabase
         DatabaseHelper databaseHelper = new DatabaseHelper(getActivity());
         SQLiteDatabase database = databaseHelper.getWritableDatabase();
@@ -106,6 +123,8 @@ public class AgregarTransacion extends Fragment {
             // Iniciar una transacción
             database.beginTransaction();
 
+            Toast.makeText(getActivity(), "El id que estamos guarado es"+categoryId, Toast.LENGTH_SHORT).show();
+
             // Crear un objeto ContentValues para almacenar los valores de la transacción
             ContentValues values = new ContentValues();
             values.put("description", description);
@@ -113,6 +132,8 @@ public class AgregarTransacion extends Fragment {
             values.put("transaction_type", transactionType);
             values.put("category_id", categoryId);
             values.put("user_id", userId);
+            values.put("Data_registred", date); // Agregar la fecha a los valores
+
 
             // Insertar la transacción en la tabla correspondiente
             long result = database.insert("Transacciones", null, values);
@@ -153,15 +174,11 @@ public class AgregarTransacion extends Fragment {
 
     private void redirectToHome() {
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-
-        // Crear una instancia del fragmento "InicioTransaccion"
-        Fragment fragment = new InicioTransacion();
-
-        // Realizar la transacción para mostrar el fragmento
-        fragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, fragment) // Reemplaza R.id.fragmentContainer con el ID del contenedor en tu layout
-                .commit();
+        if (fragmentManager != null) {
+            fragmentManager.popBackStack(); // Retrocede una transacción en la pila de retroceso
+        }
     }
+
 
 
 

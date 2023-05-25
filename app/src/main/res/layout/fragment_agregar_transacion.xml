@@ -51,15 +51,7 @@
             android:inputType="text"
             android:layout_margin="20dp"/>
 
-        <EditText
-            android:id="@+id/editTextCategoryId"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:paddingStart="16dp"
-            android:hint="ID de categoría"
-            android:background="@drawable/edittext"
-            android:inputType="number"
-            android:layout_margin="20dp"/>
+
 
 
 
