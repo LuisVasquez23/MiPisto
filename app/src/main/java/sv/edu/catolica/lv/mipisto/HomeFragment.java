@@ -26,6 +26,7 @@ public class HomeFragment extends Fragment {
     private ImageButton btnAñadircategoria;
     private SharedPreferences sharedPreferences;
 
+    private  TextView fondoDin;
     private LinearLayout linearLayoutCategories;
     private DatabaseHelper databaseHelper;
 
@@ -36,6 +37,23 @@ public class HomeFragment extends Fragment {
 
         // Obtener referencia al botón de añadir categorías desde la vista raíz
         btnAñadircategoria = rootView.findViewById(R.id.btnAñadircategoria);
+
+        fondoDin = rootView.findViewById(R.id.fondosDin);
+        LinearLayout fondosContainer = rootView.findViewById(R.id.accederFondos);
+        fondosContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Aquí puedes iniciar una nueva actividad o realizar una transacción de fragmento
+                // para mostrar la nueva pantalla
+                Fragment fragmentSecundario = new FondosFragment();
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_container, fragmentSecundario);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            }
+        });
+
 
         // Configurar OnClickListener para el botón de añadir categorías
         btnAñadircategoria.setOnClickListener(new View.OnClickListener() {
@@ -68,6 +86,8 @@ public class HomeFragment extends Fragment {
             }
         });
 
+
+
         return rootView;
     }
 
@@ -85,6 +105,15 @@ public class HomeFragment extends Fragment {
 
         // Cargar las categorías desde la base de datos
         cargarCategorias();
+
+        // Obtener el ID del usuario desde las preferencias compartidas
+        int userId = getUserIdFromSharedPreferences();
+
+        // Obtener los fondos del usuario
+        double fondos = obtenerFondosUsuario(userId);
+
+        // Mostrar los fondos en el TextView correspondiente
+        fondoDin.setText(String.valueOf(fondos));
     }
 
     private void cargarCategorias() {
@@ -182,4 +211,21 @@ public class HomeFragment extends Fragment {
     private int getUserIdFromSharedPreferences() {
         return sharedPreferences.getInt("user_id", -1);
     }
+    @SuppressLint("Range")
+    private double obtenerFondosUsuario(int userId) {
+        double fondos = 0.0;
+
+        SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT presupuesto_mensual FROM User WHERE user_id = ?", new String[]{String.valueOf(userId)});
+
+        if (cursor.moveToFirst()) {
+            fondos = cursor.getDouble(cursor.getColumnIndex("presupuesto_mensual"));
+        }
+
+        cursor.close();
+        db.close();
+
+        return fondos;
+    }
+
 }
