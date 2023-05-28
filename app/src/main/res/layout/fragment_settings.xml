@@ -4,14 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center_horizontal"
-    android:paddingTop="16dp" >
+    android:gravity="center"
+    android:padding="16dp"
+    android:background="#F5F5F5">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Establezca el día inicial de su periodo de registro de gastos:"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="#000000" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,15 +25,27 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:src="@android:drawable/ic_menu_my_calendar"
-            android:background="@android:color/transparent" />
+            android:background="@android:color/transparent"
+            android:contentDescription="accion" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextStartDate"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:inputType="none"
-            android:focusable="false" />
+            android:layout_weight="1">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextStartDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                android:focusable="false"
+                android:background="#FFFFFF"
+                android:textColor="#000000"
+                android:textCursorDrawable="@null"
+                android:hint="Ingrese la fecha"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
     </LinearLayout>
 
@@ -39,7 +53,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Establezca su plazo de registros:"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="#000000"
+        android:layout_marginTop="16dp" />
 
     <RadioGroup
         android:id="@+id/radioGroup"
@@ -51,13 +67,15 @@
             android:id="@+id/radioButton15"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="15 días" />
+            android:text="15 días"
+            android:textColor="#000000" />
 
         <RadioButton
             android:id="@+id/radioButton31"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="31 días" />
+            android:text="31 días"
+            android:textColor="#000000" />
 
     </RadioGroup>
 
@@ -66,11 +84,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Guardar preferencias"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:textColor="#FFFFFF"
+        android:background="#1976D2"
+        android:layout_marginTop="16dp" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:layout_marginTop="16dp">
 
         <TextView
             android:id="@+id/textViewInicioMes"
@@ -78,6 +101,7 @@
             android:layout_height="wrap_content"
             android:text="Día de inicio: "
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="#000000"
             android:visibility="gone" />
 
         <TextView
@@ -86,6 +110,7 @@
             android:layout_height="wrap_content"
             android:text="Plazo de días: "
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="#000000"
             android:visibility="gone" />
 
     </LinearLayout>

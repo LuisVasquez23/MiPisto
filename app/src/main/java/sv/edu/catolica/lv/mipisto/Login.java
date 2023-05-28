@@ -94,7 +94,7 @@ public class Login extends AppCompatActivity {
 
             if (cursor.moveToFirst()) {
                 userId = cursor.getInt(cursor.getColumnIndex("user_id"));
-                Toast.makeText(Login.this, "ID del usuario: " + userId, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(Login.this, "ID del usuario: " + userId, Toast.LENGTH_SHORT).show();
 
             }
 

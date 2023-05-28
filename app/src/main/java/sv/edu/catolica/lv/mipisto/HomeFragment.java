@@ -7,8 +7,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -22,6 +24,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 public class HomeFragment extends Fragment {
     private ImageButton btnAñadircategoria;
     private SharedPreferences sharedPreferences;
@@ -30,10 +42,66 @@ public class HomeFragment extends Fragment {
     private LinearLayout linearLayoutCategories;
     private DatabaseHelper databaseHelper;
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
+        // Obtener instancia de SharedPreferences
+        sharedPreferences = getActivity().getSharedPreferences("session", Context.MODE_PRIVATE);
+        sharedPreferences = getActivity().getSharedPreferences("sesion", Context.MODE_PRIVATE);
+
+        databaseHelper = new DatabaseHelper(getActivity());
+        int id = sharedPreferences.getInt("user_id", -1);
+        // Obtener la fecha actual
+        Calendar calendar = Calendar.getInstance();
+
+        // Obtener el día de inicio del mes y el plazo de registros desde la base de datos
+        LocalDate diaInicioMes = obtenerDiaInicioMes();
+        int plazoRegistros = obtenerPlazoRegistros();
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        // Guardar la fecha de inicio del mes en SharedPreferences
+        editor.putLong("dia_inicio_mes", diaInicioMes.toEpochDay());
+        editor.apply();
+
+        // Calcular la fecha final sumando el plazo de días al día de inicio del mes
+        LocalDate fechaFinal = diaInicioMes.plusDays(plazoRegistros);
+      //  Toast.makeText(getContext(),""+fechaFinal.toEpochDay()+" a "+diaInicioMes.toEpochDay(), Toast.LENGTH_SHORT).show();
+
+        // Guardar la fecha final en SharedPreferences
+        editor.putLong("fecha_final", fechaFinal.toEpochDay());
+        editor.apply();
+
+
+
+
+
+
+        //Toast.makeText(getContext(), "guardado."+diaInicioMesAsDate.getTime()+fechaFinalAsDate.getTime(), Toast.LENGTH_SHORT).show();
+
+
+        // Obtener la fecha actual
+        LocalDate currentDate = LocalDate.now();
+
+
+        // Verificar si la fecha actual no es un día después de la fecha final
+        if (!currentDate.isBefore(fechaFinal.plusDays(1))) {
+            // La fecha actual es un día después de la fecha final
+
+            Date currentDateAsDate = Date.from(currentDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            Toast.makeText(getContext(), "id"+id+currentDateAsDate, Toast.LENGTH_SHORT).show();
+
+            actualizarDiaInicioMes(currentDateAsDate, id);
+            Toast.makeText(getContext(), "Es la fecha. Actualizar día de inicio del mes.", Toast.LENGTH_SHORT).show();
+
+            // Convertir LocalDate a Date
+            // Actualizar el día de inicio del mes con la fecha actual
+        } else {
+            // La fecha actual no es un día después de la fecha final
+            //Toast.makeText(getContext(), "No es la fecha. Aún quedan días.", Toast.LENGTH_SHORT).show();
+        }
+
 
         // Obtener referencia al botón de añadir categorías desde la vista raíz
         btnAñadircategoria = rootView.findViewById(R.id.btnAñadircategoria);
@@ -91,6 +159,83 @@ public class HomeFragment extends Fragment {
         return rootView;
     }
 
+    private void actualizarDiaInicioMes(Date currentDate, int userId) {
+        // Abrir la conexión a la base de datos
+        DatabaseHelper databaseHelper = new DatabaseHelper(getActivity());
+        SQLiteDatabase db = databaseHelper.getWritableDatabase();
+
+        // Formatear la fecha actual en el formato "dd/MM/yyyy"
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        String fechaActualFormateada = dateFormat.format(currentDate);
+
+        // Construir la consulta SQL para actualizar el valor de dia_inicio_mes
+        String query = "UPDATE User SET dia_inicio_mes = ? WHERE user_id = ?";
+        String[] args = {fechaActualFormateada, String.valueOf(userId)};
+
+        try {
+            // Ejecutar la consulta SQL
+            db.execSQL(query, args);
+        } finally {
+            // Cerrar la conexión a la base de datos
+            db.close();
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @SuppressLint("Range")
+    private LocalDate obtenerDiaInicioMes() {
+        LocalDate diaInicioMes = LocalDate.now();  // Valor por defecto en caso de error
+
+        try {
+            SQLiteDatabase db = databaseHelper.getReadableDatabase();
+            Cursor cursor = db.rawQuery("SELECT dia_inicio_mes FROM User", null);
+
+            if (cursor.moveToFirst()) {
+                String fechaInicioMesString = cursor.getString(cursor.getColumnIndex("dia_inicio_mes"));
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                diaInicioMes = LocalDate.parse(fechaInicioMesString, formatter);
+            }
+
+            cursor.close();
+            db.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            String errorMessage = "Error al obtener el día de inicio del mes: " + e.getMessage();
+            Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
+            Log.e("HomeFragment", "Error al obtener el día de inicio del mes: " + e.getMessage());
+        }
+
+        return diaInicioMes;
+    }
+
+
+
+    @SuppressLint("Range")
+    private int obtenerPlazoRegistros() {
+        int plazoRegistros = 0; // Valor predeterminado
+
+        try {
+            SQLiteDatabase db = databaseHelper.getReadableDatabase();
+            Cursor cursor = db.rawQuery("SELECT plazo_registros FROM User", null);
+
+            if (cursor.moveToFirst()) {
+                plazoRegistros = cursor.getInt(cursor.getColumnIndex("plazo_registros"));
+            }
+
+            cursor.close();
+            db.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            String errorMessage = "Error al obtener el plazo de registros: " + e.getMessage();
+            Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
+            Log.e("HomeFragment", "Error al obtener el plazo de registros: " + e.getMessage());
+        }
+
+        return plazoRegistros;
+    }
+
+
+
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -122,7 +267,7 @@ public class HomeFragment extends Fragment {
         int userId = getUserIdFromSharedPreferences();
 
         if (userId != -1) {
-            Toast.makeText(getContext(), "id"+userId, Toast.LENGTH_SHORT).show();
+           // Toast.makeText(getContext(), "id"+userId, Toast.LENGTH_SHORT).show();
 
         } else {
             Toast.makeText(getContext(), "No se encontró el ID del usuario en SharedPreferences", Toast.LENGTH_SHORT).show();
