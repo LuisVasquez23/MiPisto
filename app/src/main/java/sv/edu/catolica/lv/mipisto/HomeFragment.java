@@ -1,7 +1,10 @@
 package sv.edu.catolica.lv.mipisto;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -49,7 +52,6 @@ public class HomeFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         // Obtener instancia de SharedPreferences
         sharedPreferences = getActivity().getSharedPreferences("session", Context.MODE_PRIVATE);
-        sharedPreferences = getActivity().getSharedPreferences("sesion", Context.MODE_PRIVATE);
 
         databaseHelper = new DatabaseHelper(getActivity());
         int id = sharedPreferences.getInt("user_id", -1);
@@ -84,23 +86,66 @@ public class HomeFragment extends Fragment {
         // Obtener la fecha actual
         LocalDate currentDate = LocalDate.now();
 
-
         // Verificar si la fecha actual no es un día después de la fecha final
         if (!currentDate.isBefore(fechaFinal.plusDays(1))) {
             // La fecha actual es un día después de la fecha final
-
             Date currentDateAsDate = Date.from(currentDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-            Toast.makeText(getContext(), "id"+id+currentDateAsDate, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getContext(), "id" + id + " " + currentDateAsDate, Toast.LENGTH_SHORT).show();
 
-            actualizarDiaInicioMes(currentDateAsDate, id);
-            Toast.makeText(getContext(), "Es la fecha. Actualizar día de inicio del mes.", Toast.LENGTH_SHORT).show();
-
-            // Convertir LocalDate a Date
             // Actualizar el día de inicio del mes con la fecha actual
-        } else {
-            // La fecha actual no es un día después de la fecha final
-            //Toast.makeText(getContext(), "No es la fecha. Aún quedan días.", Toast.LENGTH_SHORT).show();
+            actualizarDiaInicioMes(currentDateAsDate, id);
+            Toast.makeText(getContext(), "actualice" + id + " " + currentDateAsDate, Toast.LENGTH_SHORT).show();
+
+            Toast.makeText(getContext(), "Fondos.", Toast.LENGTH_SHORT).show();
+            // Obtener los fondos actuales del usuario
+            double fondosActuales = getFondosActuales(id);
+
+            // Obtener los gastos totales del usuario
+            double gastosTotales = getGastosMesAnterior();
+
+            double resultadoAhorros= fondosActuales-gastosTotales;
+
+            //traformar diaInicioMes a data
+            // Convertir diaInicioMes a Date
+            Date diaInicioMesAsDate = Date.from(diaInicioMes.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+            // Guardar los datos en la tabla de historial
+            guardarDatosEnHistorial(fondosActuales, resultadoAhorros, diaInicioMesAsDate,id);
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Confirmación");
+            builder.setMessage("¿Deseas cambiar los fondos del mes y guardar los datos en el historial?");
+
+            builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // Convertir LocalDate a Date
+
+
+
+                    // Enviar a AgregarFondosFragment
+                    AgregarFondosFragment agregarFondosFragment = new AgregarFondosFragment();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    if (fragmentManager != null) {
+                        fragmentManager.beginTransaction()
+                                .replace(R.id.fragment_container, agregarFondosFragment)
+                                .addToBackStack(null)
+                                .commit();
+                    }
+                }
+            });
+
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // Acciones a realizar si el usuario no desea cambiar los fondos del mes y guardar los datos en el historial
+                }
+            });
+
+            // Mostrar el cuadro de diálogo de confirmación
+            builder.create().show();
         }
+
+
 
 
         // Obtener referencia al botón de añadir categorías desde la vista raíz
@@ -372,5 +417,102 @@ public class HomeFragment extends Fragment {
 
         return fondos;
     }
+
+    public void guardarDatosEnHistorial(double fondosActuales, double resultadoAhorros, Date fechaInicial, int userId) {
+        SQLiteDatabase database = databaseHelper.getWritableDatabase();
+
+        try {
+            // Obtener la fecha actual
+            Calendar calendar = Calendar.getInstance();
+            Date fechaFinal = calendar.getTime();
+            // Formatear la fecha inicial
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String formattedFechaInicial = dateFormat.format(fechaInicial);
+            // Crear un objeto ContentValues para almacenar los valores del historial
+            ContentValues values = new ContentValues();
+            values.put("fondos_iniciales", fondosActuales);
+            values.put("fondos_finales", resultadoAhorros);
+            values.put("fecha_final", formattedFechaInicial); // Convertir la fecha final a milisegundos ES FECHA INICIAL
+            values.put("user_id", userId);
+
+            // Insertar el registro en la tabla "Historial"
+            long result = database.insert("Historial", null, values);
+
+            if (result != -1) {
+                Toast.makeText(getContext(), "Datos guardados en historial correctamente", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "Error al guardar datos en historial", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(), "Error al guardar datos en historial: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        } finally {
+            // Cerrar la conexión con la base de datos
+            database.close();
+        }
+    }
+    @SuppressLint("Range")
+    private double getFondosActuales(int userId) {
+        double fondosActuales = 0.0;
+
+        try {
+            SQLiteDatabase db = databaseHelper.getReadableDatabase();
+            Cursor cursor = db.rawQuery("SELECT presupuesto_mensual FROM User WHERE user_id = ?", new String[]{String.valueOf(userId)});
+
+            if (cursor.moveToFirst()) {
+                fondosActuales = cursor.getDouble(cursor.getColumnIndex("presupuesto_mensual"));
+            }
+
+            cursor.close();
+            db.close();
+        } catch (Exception e) {
+            Toast.makeText(getActivity(), "Error al obtener los fondos actuales: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+
+        return fondosActuales;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private double getGastosMesAnterior() {
+        double gastosMesAnterior = 0.0;
+
+        try {
+            SQLiteDatabase db = databaseHelper.getReadableDatabase();
+
+            // Obtener el ID de usuario desde SharedPreferences
+            int userId = getUserIdFromSharedPreferences();
+
+            SharedPreferences sharedPreferences = getActivity().getSharedPreferences("session", Context.MODE_PRIVATE);
+            long diaInicioMesTime = sharedPreferences.getLong("dia_inicio_mes", 0);
+            long fechaFinalTime = sharedPreferences.getLong("fecha_final", 0);
+
+            LocalDate diaInicioMes = LocalDate.ofEpochDay(diaInicioMesTime);
+            LocalDate fechaFinal = LocalDate.ofEpochDay(fechaFinalTime);
+
+            // Convertir las fechas a formato String
+            String fechaInicioMesAnteriorStr = diaInicioMes.minusMonths(1).toString();
+            String fechaFinMesAnteriorStr = fechaFinal.minusMonths(1).toString();
+
+            // Consultar la suma de los gastos del mes anterior para el usuario especificado
+            Cursor cursor = db.rawQuery("SELECT SUM(amount) FROM Transacciones WHERE user_id = ? " +
+                    "AND Data_registred >= ? AND Data_registred <= ?", new String[]{
+                    String.valueOf(userId), fechaInicioMesAnteriorStr, fechaFinMesAnteriorStr});
+
+            if (cursor.moveToFirst()) {
+                gastosMesAnterior = cursor.getDouble(0);
+            }
+
+            cursor.close();
+            db.close();
+        } catch (Exception e) {
+            Toast.makeText(getActivity(), "Error al obtener los gastos del mes anterior: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+
+        return gastosMesAnterior;
+    }
+
+
 
 }

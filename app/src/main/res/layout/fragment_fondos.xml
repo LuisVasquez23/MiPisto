@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FondosFragment"
     android:padding="40dp"
     android:orientation="vertical">
 
@@ -17,11 +16,12 @@
 
         <TextView
             android:id="@+id/textViewFondosActuales"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Fondos Actuales: $1000"
             android:textSize="20sp"
-            android:gravity="center" />
+            android:gravity="center"
+            android:textColor="#000000" />
 
     </LinearLayout>
 
@@ -38,7 +38,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Agregar Fondos"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            android:textColor="#FFFFFF" />
 
     </LinearLayout>
 
@@ -53,18 +54,42 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:layout_marginBottom="16dp">
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/textViewGastos"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Gastos: $500"
-            android:textSize="18sp"
-            android:gravity="center" />
+            android:layout_gravity="center"
+            android:text="Gastos"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
+        <LinearLayout
+            android:id="@+id/accederGastos"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginTop="15dp"
+            android:background="@color/fondoPrincipal"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_margin="10dp"
+                android:src="@drawable/gatos" />
+
+            <TextView
+                android:id="@+id/textViewGastos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="Gastos: $500"
+                android:textColor="@color/white"
+                android:textSize="48sp" />
+        </LinearLayout>
     </LinearLayout>
 
     <!-- Separador -->
@@ -78,17 +103,42 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/textViewAhorros"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ahorros: $500"
-            android:textSize="18sp"
-            android:gravity="center" />
+            android:layout_gravity="center"
+            android:text="Ahorros"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
+        <LinearLayout
+            android:id="@+id/accederAhorros"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginTop="15dp"
+            android:background="@color/fondoPrincipal"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_margin="10dp"
+                android:src="@drawable/ahorro" />
+
+            <TextView
+                android:id="@+id/textViewAhorros"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="Ahorros: $500"
+                android:textColor="@color/white"
+                android:textSize="48sp" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -12,6 +11,7 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/textViewCategory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -27,14 +27,8 @@
             android:background="@color/fondoPrincipal"
             android:orientation="horizontal">
 
-            <ImageView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_margin="10dp"
-                android:src="@drawable/inicio_din" />
-
             <TextView
-                android:id="@+id/textViewCategory"
+                android:id="@+id/totalCat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -56,39 +50,6 @@
         android:gravity="center"
         android:padding="16dp"
         android:visibility="gone" />
-    <!-- Quiero aca poner tres textso que quepa en una linea descripcion data y amount-->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="26dp"
-        android:orientation="horizontal">
-        <TextView
-            android:id="@+id/textViewData"
-            android:layout_width="87dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:text="Data: "
-            android:textStyle="bold" />
-        <TextView
-            android:id="@+id/textViewAmount"
-            android:layout_width="106dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:text="Amount: "
-            android:textStyle="bold" />
-        <TextView
-            android:id="@+id/textViewDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:text="Descripción: "
-
-            android:textStyle="bold" />
-
-
-
-
-
-    </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -102,7 +63,15 @@
             android:orientation="vertical"
             android:gravity="center">
 
-            <!-- Las vistas de las transacciones se generarán aquí dinámicamente -->
+            <TableLayout
+                android:id="@+id/transaccionesTable"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="*">
+
+                <!-- Aquí puedes agregar las filas de la tabla dinámicamente en el código Java -->
+
+            </TableLayout>
 
         </LinearLayout>
     </ScrollView>

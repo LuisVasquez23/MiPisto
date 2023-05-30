@@ -38,7 +38,7 @@ public class InicioTransacion extends Fragment {
 
 
     private String categoryName;
-    private TextView textViewCategory;
+    private TextView textViewCategory,totalCat;
     public static InicioTransacion newInstance(int categoryId, String categoryName) {
         InicioTransacion fragment = new InicioTransacion();
         Bundle args = new Bundle();
@@ -66,7 +66,10 @@ public class InicioTransacion extends Fragment {
         }
 
         textViewCategory = rootView.findViewById(R.id.textViewCategory);
-        textViewCategory.setText(String.valueOf(categoryName));
+        textViewCategory = rootView.findViewById(R.id.totalCat);
+
+
+        textViewCategory.setText(String.valueOf("Categoria: "+categoryName));
         // Configurar OnClickListener para el botón de añadir categorías
         // Configurar OnClickListener para el botón de añadir categorías
         btnAñadirTransacion.setOnClickListener(new View.OnClickListener() {
@@ -140,69 +143,108 @@ public class InicioTransacion extends Fragment {
         // Obtener el ID de usuario desde SharedPreferences
         int userId = getUserIdFromSharedPreferences();
 
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("sesion", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("session", Context.MODE_PRIVATE);
         long diaInicioMesTime = sharedPreferences.getLong("dia_inicio_mes", 0);
         long fechaFinalTime = sharedPreferences.getLong("fecha_final", 0);
 
-        Toast.makeText(getContext(), "id en categoria"+userId+" en la categoria con id: "+diaInicioMesTime+"fin"+fechaFinalTime, Toast.LENGTH_SHORT).show();
+        // Variable para almacenar la suma de los amounts
+        double totalAmount = 0.0;
+       // Toast.makeText(getContext(), "id en categoria" + userId + " en la categoria con id: " + diaInicioMesTime + "fin" + fechaFinalTime, Toast.LENGTH_SHORT).show();
 
         LocalDate diaInicioMes = LocalDate.ofEpochDay(diaInicioMesTime);
         LocalDate fechaFinal = LocalDate.ofEpochDay(fechaFinalTime);
 
-
         // Realizar una consulta a la base de datos para obtener las transacciones de la categoría y usuario específicos
-
         // comprendidas entre el día de inicio del mes y la fecha final
         Cursor cursor = db.rawQuery("SELECT * FROM Transacciones WHERE category_id = ? AND user_id = ? " +
                 "AND Data_registred >= ? AND Data_registred <= ?", new String[]{
                 String.valueOf(categoryId), String.valueOf(userId), diaInicioMes.toString(), fechaFinal.toString()});
 
+
+
         // Obtener referencia al TextView para mostrar el mensaje cuando no hay transacciones
         TextView textViewNoTransacion = getView().findViewById(R.id.textViewNoTransacion);
 
-        // Limpiar el contenedor principal
-        LinearLayout linearLayoutCategories = getView().findViewById(R.id.linearTransacion);
-        linearLayoutCategories.removeAllViews();
+        // Obtener referencia al TableLayout
+        TableLayout transaccionesTable = getView().findViewById(R.id.transaccionesTable);
+
+        // Limpiar el TableLayout
+        transaccionesTable.removeAllViews();
 
         // Variable de bandera para controlar si se encontraron transacciones
         boolean transaccionesEncontradas = false;
 
+        // Crear una nueva fila para los encabezados
+        TableRow encabezadosRow = new TableRow(getContext());
+
+        // Configurar los elementos de los encabezados
+        TextView textViewHeaderDescription = new TextView(getContext());
+        textViewHeaderDescription.setText("Descripción");
+        TextView textViewHeaderDate = new TextView(getContext());
+        textViewHeaderDate.setText("Fecha");
+        TextView textViewHeaderAmount = new TextView(getContext());
+        textViewHeaderAmount.setText("Cantidad");
+
+        // Agregar los elementos de los encabezados a la fila
+        encabezadosRow.addView(textViewHeaderDescription);
+        encabezadosRow.addView(textViewHeaderDate);
+        encabezadosRow.addView(textViewHeaderAmount);
+
+        // Agregar la fila de los encabezados a la tabla
+        transaccionesTable.addView(encabezadosRow);
+
         // Verificar si hay transacciones disponibles
         if (cursor.moveToFirst()) {
             do {
+                // Obtener el amount de la transacción desde el cursor
+
+
                 // Obtener los datos de la transacción desde el cursor
                 @SuppressLint("Range") int transactionId = cursor.getInt(cursor.getColumnIndex("Transaction_Id"));
                 @SuppressLint("Range") String description = cursor.getString(cursor.getColumnIndex("Description"));
                 @SuppressLint("Range") String date = cursor.getString(cursor.getColumnIndex("Data_registred"));
                 @SuppressLint("Range") double amount = cursor.getDouble(cursor.getColumnIndex("Amount"));
+                // Sumar el amount al totalAmount
+                totalAmount += amount;
+                // Crear una nueva fila para la transacción
+                TableRow row = new TableRow(getContext());
 
-                // Inflar el diseño de la transacción
-                View transaccionView = getLayoutInflater().inflate(R.layout.item_transacion, linearLayoutCategories, false);
-
-                // Configurar los elementos de la vista de la transacción según los datos obtenidos
-                TextView textViewDescription = transaccionView.findViewById(R.id.textViewDescription);
-                TextView textViewDate = transaccionView.findViewById(R.id.textViewDate);
-                TextView textViewAmount = transaccionView.findViewById(R.id.textViewAmount);
-
+                // Configurar los elementos de la fila de la transacción según los datos obtenidos
+                TextView textViewDescription = new TextView(getContext());
                 textViewDescription.setText(description);
+
+                TextView textViewDate = new TextView(getContext());
                 textViewDate.setText(date);
+
+                TextView textViewAmount = new TextView(getContext());
                 textViewAmount.setText(String.valueOf(amount));
 
-                // Agregar la vista de la transacción al contenedor
-                linearLayoutCategories.addView(transaccionView);
+                // Agregar los elementos a la fila
+                row.addView(textViewDescription);
+                row.addView(textViewDate);
+                row.addView(textViewAmount);
+
+                // Agregar la fila a la tabla
+                transaccionesTable.addView(row);
 
                 // Establecer la bandera como verdadera, ya que se encontraron transacciones
                 transaccionesEncontradas = true;
             } while (cursor.moveToNext());
         }
+        // Obtener referencia al TextView totalCat
+        TextView textViewTotalCat = getView().findViewById(R.id.totalCat);
 
-        // Mostrar u ocultar el contenedor principal y el mensaje según si se encontraron transacciones
-        linearLayoutCategories.setVisibility(transaccionesEncontradas ? View.VISIBLE : View.GONE);
+        // Establecer el valor del TextView con la suma total
+        textViewTotalCat.setText(String.valueOf("$"+totalAmount));
+        // Mostrar u ocultar el TableLayout y el mensaje según si se encontraron transacciones
+        transaccionesTable.setVisibility(transaccionesEncontradas ? View.VISIBLE : View.GONE);
         textViewNoTransacion.setVisibility(transaccionesEncontradas ? View.GONE : View.VISIBLE);
 
         cursor.close();
         db.close();
     }
+
+
     private int getUserIdFromSharedPreferences() {
         return sharedPreferences.getInt("user_id", -1);
     }

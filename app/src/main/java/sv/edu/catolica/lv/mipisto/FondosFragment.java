@@ -6,8 +6,10 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -19,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.sql.ResultSet;
+import java.time.LocalDate;
 import java.util.Locale;
 
 public class FondosFragment extends Fragment {
@@ -31,6 +34,7 @@ public class FondosFragment extends Fragment {
     private DatabaseHelper databaseHelper;
     private int userId;
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -51,7 +55,7 @@ public class FondosFragment extends Fragment {
         textViewFondosActuales.setText("Fondos Actuales: $" + fondosActuales);
 
         // Obtener los gastos del usuario y mostrarlos en el TextView
-        double gastos = getGastos(userId);
+        double  gastos = getGastosMesAnterior();
         textViewGastos.setText(String.format(Locale.getDefault(), "Gastos: $%.2f", gastos));
 
         // Calcular y mostrar los ahorros del usuario
@@ -110,27 +114,49 @@ public class FondosFragment extends Fragment {
         return fondosActuales;
     }
 
-    @SuppressLint("Range")
-    private double getGastos(int userId) {
-        double gastos = 0.0;
+
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private double getGastosMesAnterior() {
+        double gastosMesAnterior = 0.0;
 
         try {
             SQLiteDatabase db = databaseHelper.getReadableDatabase();
-            Cursor cursor = db.rawQuery("SELECT SUM(amount) FROM Transacciones WHERE user_id = ?", new String[]{String.valueOf(userId)});
+
+            // Obtener el ID de usuario desde SharedPreferences
+            int userId = getUserIdFromSharedPreferences();
+
+            SharedPreferences sharedPreferences = getActivity().getSharedPreferences("session", Context.MODE_PRIVATE);
+            long diaInicioMesTime = sharedPreferences.getLong("dia_inicio_mes", 0);
+            long fechaFinalTime = sharedPreferences.getLong("fecha_final", 0);
+
+            LocalDate diaInicioMes = LocalDate.ofEpochDay(diaInicioMesTime);
+            LocalDate fechaFinal = LocalDate.ofEpochDay(fechaFinalTime);
+
+            // Convertir las fechas a formato String
+            String fechaInicioMesAnteriorStr = diaInicioMes.minusMonths(1).toString();
+            String fechaFinMesAnteriorStr = fechaFinal.minusMonths(1).toString();
+
+            // Consultar la suma de los gastos del mes anterior para el usuario especificado
+            Cursor cursor = db.rawQuery("SELECT SUM(amount) FROM Transacciones WHERE user_id = ? " +
+                    "AND Data_registred >= ? AND Data_registred <= ?", new String[]{
+                    String.valueOf(userId), fechaInicioMesAnteriorStr, fechaFinMesAnteriorStr});
 
             if (cursor.moveToFirst()) {
-                gastos = cursor.getDouble(0);
+                gastosMesAnterior = cursor.getDouble(0);
             }
 
             cursor.close();
             db.close();
         } catch (Exception e) {
-            Toast.makeText(getActivity(), "Error al obtener los gastos: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Error al obtener los gastos del mes anterior: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
 
-        return gastos;
+        return gastosMesAnterior;
     }
+
+
 
 
     // Resto del código del fragmento...

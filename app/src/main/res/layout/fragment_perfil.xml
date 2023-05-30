@@ -4,54 +4,40 @@
     android:layout_height="match_parent"
     tools:context=".PerfilFragment">
 
-    <LinearLayout
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp">
+        tools:context=".MainActivity">
 
         <TextView
-            android:id="@+id/textViewNameLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Nombre:"
-            android:textStyle="bold"
-            android:textSize="18sp" />
-
-        <EditText
-            android:id="@+id/editTextName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:editable="false"
-            android:textStyle="bold"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/textViewEmailLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Correo electrónico:"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:layout_marginTop="8dp" />
-
-        <EditText
-            android:id="@+id/editTextEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:editable="false"
-            android:textStyle="bold"
-            android:textSize="18sp" />
-
-        <Button
-            android:id="@+id/buttonEditProfile"
+            android:id="@+id/userNameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:textSize="16sp"
+            android:textStyle="bold"
             android:layout_marginTop="16dp"
-            android:padding="8dp"
-            android:text="Editar perfil" />
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <TableLayout
+                android:id="@+id/historyTable"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="*">
+
+            </TableLayout>
+
+        </ScrollView>
 
     </LinearLayout>
 
+
 </FrameLayout>
+
