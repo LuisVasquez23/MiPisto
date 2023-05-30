@@ -281,6 +281,7 @@ public class InicioTransacion extends Fragment {
 
         // Establecer el valor del TextView con la suma total
         textViewTotalCat.setText(String.valueOf("$"+totalAmount));
+
         // Mostrar u ocultar el TableLayout y el mensaje según si se encontraron transacciones
         transaccionesTable.setVisibility(transaccionesEncontradas ? View.VISIBLE : View.GONE);
         textViewNoTransacion.setVisibility(transaccionesEncontradas ? View.GONE : View.VISIBLE);
