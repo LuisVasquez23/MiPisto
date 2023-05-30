@@ -76,4 +76,10 @@ public class Registro extends AppCompatActivity {
         return resultado != -1;
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(Registro.this, Login.class);
+        startActivity(intent);
+        finish();
+    }
 }
