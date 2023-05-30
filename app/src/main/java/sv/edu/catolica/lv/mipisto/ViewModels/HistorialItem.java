@@ -1,4 +1,4 @@
-package sv.edu.catolica.lv.mipisto;
+package sv.edu.catolica.lv.mipisto.ViewModels;
 
 public class HistorialItem {
     private String date;

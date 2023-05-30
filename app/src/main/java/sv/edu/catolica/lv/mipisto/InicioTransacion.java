@@ -29,16 +29,17 @@ import java.time.LocalDate;
 import java.util.Date;
 
 public class InicioTransacion extends Fragment {
-    private ImageButton btnAñadirTransacion;
 
+    // DECLARACION DE VARIABLES
+    private ImageButton btnAñadirTransacion;
     private LinearLayout linearLayoutCategories;
     private DatabaseHelper databaseHelper;
     private int categoryId;
     private SharedPreferences sharedPreferences;
-
-
     private String categoryName;
     private TextView textViewCategory,totalCat;
+
+
     public static InicioTransacion newInstance(int categoryId, String categoryName) {
         InicioTransacion fragment = new InicioTransacion();
         Bundle args = new Bundle();
@@ -50,8 +51,8 @@ public class InicioTransacion extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
+
         View rootView = inflater.inflate(R.layout.fragment_inicio_trasancion, container, false);
 
         // Obtener referencia al botón de añadir categorías desde la vista raíz
@@ -60,18 +61,18 @@ public class InicioTransacion extends Fragment {
 
         // Obtener el ID de la categoría desde los argumentos pasados al fragmento
         Bundle args = getArguments();
+
         if (args != null) {
             categoryId = args.getInt("categoryId");
             categoryName = args.getString("categoryName");
         }
 
-        textViewCategory = rootView.findViewById(R.id.textViewCategory);
-        textViewCategory = rootView.findViewById(R.id.totalCat);
+        textViewCategory = rootView.findViewById(R.id.tvCategoriaName);
 
+        Log.i("InicioTransacion", "Valor text view: " + textViewCategory); // Log de información
 
-        textViewCategory.setText(String.valueOf("Categoria: "+categoryName));
-        // Configurar OnClickListener para el botón de añadir categorías
-        // Configurar OnClickListener para el botón de añadir categorías
+        textViewCategory.setText("Categoria: " + categoryName.substring(0, 1).toUpperCase() + categoryName.substring(1));
+
         btnAñadirTransacion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,12 +90,15 @@ public class InicioTransacion extends Fragment {
                     // Opcionalmente, puedes agregar una transición animada
                     // fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
                     FragmentTransaction fragmentTransac = fragmentManager.beginTransaction();
+
+
                     fragmentTransaction.setCustomAnimations(
                             R.anim.fade_in, // ID del recurso de animación para la entrada del Fragment
                             R.anim.fade_out, // ID del recurso de animación para la salida del Fragment
                             R.anim.fade_in, // ID del recurso de animación para la entrada del Fragment secundario
                             R.anim.fade_out // ID del recurso de animación para la salida del Fragment secundario
                     );
+
                     fragmentTransaction.replace(R.id.fragment_container, fragmentSecundario);
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
@@ -103,10 +107,11 @@ public class InicioTransacion extends Fragment {
                     FragmentTransaction fragmentTransactionInicio = fragmentManager.beginTransaction();
                     fragmentTransactionInicio.remove(InicioTransacion.this);
                     fragmentTransactionInicio.commit();
+
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     String errorMessage = "Error al iniciar AgregarCategoria: " + e.getMessage();
-                    Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
                     Log.e("InicioTransacion", "Error al iniciar AgregarCategoria: " + e.getMessage());
                 }
             }

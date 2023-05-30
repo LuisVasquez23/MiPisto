@@ -20,6 +20,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import sv.edu.catolica.lv.mipisto.ViewModels.HistorialItem;
+
 public class PerfilFragment extends Fragment {
 
     private TableLayout historyTable;
