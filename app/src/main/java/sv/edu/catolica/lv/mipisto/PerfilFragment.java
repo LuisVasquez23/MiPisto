@@ -43,7 +43,7 @@ public class PerfilFragment extends Fragment {
         // Obtener el nombre de usuario de la base de datos
         String userName = getUserNameFromDatabase();
         userNameTextView.setText("Nombre de usuario: "+userName);
-// Agregar los encabezados a la tabla
+        // Agregar los encabezados a la tabla
         TableRow headerRow = new TableRow(getContext());
         TextView dateHeader = createTableHeader("Fecha");
         TextView data1Header = createTableHeader("Fondos Iniciales");

@@ -94,8 +94,6 @@ public class Login extends AppCompatActivity {
 
             if (cursor.moveToFirst()) {
                 userId = cursor.getInt(cursor.getColumnIndex("user_id"));
-                //Toast.makeText(Login.this, "ID del usuario: " + userId, Toast.LENGTH_SHORT).show();
-
             }
 
             cursor.close();
@@ -107,7 +105,6 @@ public class Login extends AppCompatActivity {
 
         return userId;
     }
-
 
     private boolean checkCredentials(String email, String password) {
         boolean result = false;
@@ -148,9 +145,6 @@ public class Login extends AppCompatActivity {
     private void saveUserId(int userId) {
         try {
             sharedPreferences.edit().putInt("user_id", userId).apply();
-
-            Toast.makeText(Login.this, "ID del usuario guardado: " + userId, Toast.LENGTH_SHORT).show();
-
         } catch (Exception e) {
             Toast.makeText(Login.this, "Error al guardar el ID del usuario: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();

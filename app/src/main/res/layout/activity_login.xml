@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Login"
+    android:padding="20dp"
     android:orientation="vertical">
 
     <LinearLayout
@@ -35,7 +36,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Inicio de sesión"
-            android:textSize="24sp"/>
+            android:textSize="30sp"
+            android:textFontWeight="@integer/material_motion_duration_long_2"/>
+
     </LinearLayout>
 
     <LinearLayout
@@ -46,20 +49,15 @@
         android:layout_marginTop="10sp">
 
 
-
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/correo" />
-
         <EditText
             android:id="@+id/correo_login"
-            android:layout_width="300dp"
+            android:layout_width="match_parent"
             android:layout_height="48dp"
             android:hint="Correo Electronico"
             android:paddingStart="16dp"
             android:background="@drawable/edittext"
-            android:autofillHints="false"/>
+            android:autofillHints="false"
+            android:inputType="text" />
 
     </LinearLayout>
 
@@ -70,14 +68,9 @@
         android:layout_marginLeft="20sp"
         android:layout_marginTop="10sp">
 
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/contra" />
-
         <EditText
             android:id="@+id/contra_login"
-            android:layout_width="300dp"
+            android:layout_width="match_parent"
             android:layout_height="48dp"
             android:hint="Contraseña"
             android:paddingStart="16dp"
@@ -98,8 +91,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Olvidaste tu contraseña?"
-            android:textColor="#0043F0"
+            android:textColor="#244FBC"
             android:layout_marginTop="10sp"
+            android:textSize="16sp"
             android:textStyle="italic"/>
     </LinearLayout>
 
@@ -107,24 +101,26 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="20px">
 
         <Button
             android:id="@+id/btnInicioSesion"
-            android:layout_width="wrap_content"
-            android:layout_height="60dp"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
             android:layout_marginBottom="10dp"
             android:text="Iniciar Sesión"
-            android:textSize="24sp"
-            android:background="#394867" />
+            android:textSize="20sp"
+            android:background="@drawable/rounded_button" />
 
         <Button
             android:id="@+id/btnRegistro"
-            android:layout_width="wrap_content"
-            android:layout_height="60dp"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
             android:text="Registro"
-            android:textSize="24sp"
-            android:background="#394867" />
+            android:textSize="20sp"
+            android:background="@drawable/rounded_button"
+            />
 
     </LinearLayout>
 

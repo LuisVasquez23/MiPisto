@@ -75,11 +75,6 @@ public class HomeFragment extends Fragment {
         editor.putLong("fecha_final", fechaFinal.toEpochDay());
         editor.apply();
 
-
-
-
-
-
         //Toast.makeText(getContext(), "guardado."+diaInicioMesAsDate.getTime()+fechaFinalAsDate.getTime(), Toast.LENGTH_SHORT).show();
 
 
@@ -246,7 +241,6 @@ public class HomeFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
             String errorMessage = "Error al obtener el día de inicio del mes: " + e.getMessage();
-            Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
             Log.e("HomeFragment", "Error al obtener el día de inicio del mes: " + e.getMessage());
         }
 
@@ -315,7 +309,7 @@ public class HomeFragment extends Fragment {
            // Toast.makeText(getContext(), "id"+userId, Toast.LENGTH_SHORT).show();
 
         } else {
-            Toast.makeText(getContext(), "No se encontró el ID del usuario en SharedPreferences", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "No se encontró el ID del usuario", Toast.LENGTH_SHORT).show();
         }
         // Realizar una consulta a la base de datos para obtener las categorías
         Cursor cursor = db.rawQuery("SELECT * FROM Categoria WHERE user_id = ?", new String[]{String.valueOf(userId)});

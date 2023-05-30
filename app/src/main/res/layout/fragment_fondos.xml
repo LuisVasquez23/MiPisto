@@ -69,7 +69,8 @@
             android:layout_width="match_parent"
             android:layout_height="150dp"
             android:layout_marginTop="15dp"
-            android:background="@color/fondoPrincipal"
+            android:background="@drawable/rounded_button"
+            android:gravity="center"
             android:orientation="horizontal">
 
             <ImageView
@@ -88,7 +89,8 @@
                 android:layout_marginBottom="10dp"
                 android:text="Gastos: $500"
                 android:textColor="@color/white"
-                android:textSize="48sp" />
+                android:textSize="30sp" />
+
         </LinearLayout>
     </LinearLayout>
 
@@ -118,7 +120,8 @@
             android:layout_width="match_parent"
             android:layout_height="150dp"
             android:layout_marginTop="15dp"
-            android:background="@color/fondoPrincipal"
+            android:background="@drawable/rounded_button"
+            android:gravity="center"
             android:orientation="horizontal">
 
             <ImageView
@@ -137,7 +140,7 @@
                 android:layout_marginBottom="10dp"
                 android:text="Ahorros: $500"
                 android:textColor="@color/white"
-                android:textSize="48sp" />
+                android:textSize="30sp" />
         </LinearLayout>
     </LinearLayout>
 
