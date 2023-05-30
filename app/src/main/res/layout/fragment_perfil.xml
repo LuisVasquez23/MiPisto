@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:background="@drawable/table_border"
-
+                android:padding="10dp"
                 android:stretchColumns="*">
 
             </TableLayout>

@@ -7,9 +7,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -183,12 +186,38 @@ public class InicioTransacion extends Fragment {
         TableRow encabezadosRow = new TableRow(getContext());
 
         // Configurar los elementos de los encabezados
+
+        /*
+        * ==========================================
+        *   ENCABEZADO - DESCRIPCION
+        *  ===========================================
+        * */
         TextView textViewHeaderDescription = new TextView(getContext());
         textViewHeaderDescription.setText("Descripción");
+        textViewHeaderDescription.setGravity(Gravity.CENTER);
+        textViewHeaderDescription.setTypeface(Typeface.DEFAULT_BOLD);
+
+
+        /*
+         * ==========================================
+         *   ENCABEZADO - FECHA
+         *  ===========================================
+         * */
         TextView textViewHeaderDate = new TextView(getContext());
         textViewHeaderDate.setText("Fecha");
+        textViewHeaderDate.setGravity(Gravity.CENTER);
+        textViewHeaderDate.setTypeface(Typeface.DEFAULT_BOLD);
+
+
+        /*
+         * ==========================================
+         *   ENCABEZADO - CANTIDAD
+         *  ===========================================
+         * */
         TextView textViewHeaderAmount = new TextView(getContext());
         textViewHeaderAmount.setText("Cantidad");
+        textViewHeaderAmount.setGravity(Gravity.CENTER);
+        textViewHeaderAmount.setTypeface(Typeface.DEFAULT_BOLD);
 
         // Agregar los elementos de los encabezados a la fila
         encabezadosRow.addView(textViewHeaderDescription);
@@ -197,6 +226,12 @@ public class InicioTransacion extends Fragment {
 
         // Agregar la fila de los encabezados a la tabla
         transaccionesTable.addView(encabezadosRow);
+
+        /*
+         * ==========================================
+         *   CUERPO - RENDERIZAR LOS DATOS
+         *  ===========================================
+         * */
 
         // Verificar si hay transacciones disponibles
         if (cursor.moveToFirst()) {
@@ -214,15 +249,20 @@ public class InicioTransacion extends Fragment {
                 // Crear una nueva fila para la transacción
                 TableRow row = new TableRow(getContext());
 
+
                 // Configurar los elementos de la fila de la transacción según los datos obtenidos
                 TextView textViewDescription = new TextView(getContext());
                 textViewDescription.setText(description);
+                textViewDescription.setGravity(Gravity.CENTER);
 
                 TextView textViewDate = new TextView(getContext());
                 textViewDate.setText(date);
+                textViewDate.setGravity(Gravity.CENTER);
 
                 TextView textViewAmount = new TextView(getContext());
                 textViewAmount.setText(String.valueOf(amount));
+                textViewAmount.setGravity(Gravity.CENTER);
+
 
                 // Agregar los elementos a la fila
                 row.addView(textViewDescription);
