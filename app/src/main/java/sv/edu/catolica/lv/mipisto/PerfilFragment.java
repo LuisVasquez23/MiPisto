@@ -10,6 +10,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +20,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import sv.edu.catolica.lv.mipisto.ViewModels.HistorialItem;
 
 public class PerfilFragment extends Fragment {
 
@@ -44,15 +43,23 @@ public class PerfilFragment extends Fragment {
 
         // Obtener el nombre de usuario de la base de datos
         String userName = getUserNameFromDatabase();
-        userNameTextView.setText("Nombre de usuario: "+userName);
+        userNameTextView.setText("Usuario: "+userName);
         // Agregar los encabezados a la tabla
         TableRow headerRow = new TableRow(getContext());
+
         TextView dateHeader = createTableHeader("Fecha");
         TextView data1Header = createTableHeader("Fondos Iniciales");
         TextView data2Header = createTableHeader("Fondos finales ");
+
+        dateHeader.setGravity(Gravity.CENTER);
+        data1Header.setGravity(Gravity.CENTER);
+        data2Header.setGravity(Gravity.CENTER);
+
         headerRow.addView(dateHeader);
         headerRow.addView(data1Header);
         headerRow.addView(data2Header);
+
+
         historyTable.addView(headerRow);
         // Obtener los datos del historial de la base de datos
         List<HistorialItem> historialItems = getHistorialItemsFromDatabase();

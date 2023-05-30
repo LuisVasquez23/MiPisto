@@ -2,34 +2,41 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="20dp"
     tools:context=".PerfilFragment">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:gravity="center"
         tools:context=".MainActivity">
 
         <TextView
             android:id="@+id/userNameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
+            android:textSize="26sp"
             android:textStyle="bold"
+            android:layout_gravity="start"
             android:layout_marginTop="16dp"
             android:layout_marginStart="16dp"
+            android:layout_marginBottom="15dp"
             android:layout_marginEnd="16dp" />
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            tools:ignore="SpeakableTextPresentCheck">
 
             <TableLayout
                 android:id="@+id/historyTable"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
+                android:background="@drawable/table_border"
+
                 android:stretchColumns="*">
 
             </TableLayout>

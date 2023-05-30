@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="fondoPrincipal">#212A3E</color>
-    <color name="fondoSecundario">#394867</color>
-    <color name="fondoIconos">#D6E4E5</color>
     <color name="lavender">#8692f7</color>
     <color name="transparenet">#00FFFFFF</color>
-    <color name="colorAccent">#4DAAAAAA</color>
 </resources>
